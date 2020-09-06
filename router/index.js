@@ -71,3 +71,5 @@ router.delete('/deleteUrl/:urlId', async function(req, res) {
     }
     res.send(responseHandler.success("deleteUrl Success !", urlDeleteResponse));
 });
+
+module.exports = router;
