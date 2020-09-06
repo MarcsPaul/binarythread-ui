@@ -16,7 +16,7 @@ const Dashboard = (props) => {
   useEffect(() => {
     fetchData();
   }, []);
-
+  const { register, handleSubmit, errors, setValue } = useForm();
   async function fetchData() {
     setloading(true);
     const result = await getAllUrlsApi({ body: null });
@@ -32,6 +32,7 @@ const Dashboard = (props) => {
 
   const onSubmit = async (data) => {
     await shortenUrlApi(data).then((result) => {
+      setValue("expandedUrl","")
       fetchData();
     });
   };
@@ -54,7 +55,9 @@ const Dashboard = (props) => {
       <div className="container">
         <div className="dashboard-container">
           <div className="col-sm-9 col-md-9 col-lg-9 mx-auto">
-            <UrlConverter onSubmit={onSubmit} />
+            <UrlConverter onSubmit={onSubmit} register={register} handleSubmit = {handleSubmit} errors={errors}
+            />
+            
             {loading ? (
               <LoadingState />
             ) : (
@@ -73,20 +76,17 @@ const Dashboard = (props) => {
 
 export default Dashboard;
 
-const UrlConverter = ({ onSubmit }) => {
-  const { register, handleSubmit, errors, setValue } = useForm();
+const UrlConverter = ({ onSubmit,  register, handleSubmit, errors, setValue   }) => {
+  // const { register, handleSubmit, errors, setValue } = useForm();
   return (
     <div className="convert_url">
       <form
         className="form-signin"
-        onSubmit={() => {
-          handleSubmit(onSubmit);
-          setValue("shortUrl", "");
-        }}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <input
           type="text"
-          name="shortUrl"
+          name="expandedUrl"
           ref={register({
             required: true,
             pattern: /^\S+$/i,
@@ -94,7 +94,7 @@ const UrlConverter = ({ onSubmit }) => {
           className="form-control url_entry"
           placeholder="enter your URL"
         />
-        {errors.shortUrl && "Enter a valid url"}
+        {errors.expandedUrl && "Enter a valid url"}
         <button className="btn btn-xs btn-primary text-uppercase" type="submit">
           Shorten
         </button>
